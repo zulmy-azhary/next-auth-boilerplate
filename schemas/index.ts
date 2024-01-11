@@ -2,13 +2,18 @@ import { z } from "zod";
 
 // const EMAIL_REGEX = /^([A-Z0-9_+-]+\.?)*[A-Z0-9_+-]@([A-Z0-9][A-Z0-9-]*\.)+[A-Z]{2,}$/i
 
+const EMAIL_SCHEMA = z
+  .string()
+  .min(1, "Email Address is required.")
+  .email("Invalid Email Address.");
+
 export const loginSchema = z.object({
-  email: z.string().min(1, "Email Address is required.").email("Email Address is required."),
+  email: EMAIL_SCHEMA,
   password: z.string().min(1, "Password is required."),
 });
 
 export const registerSchema = z.object({
-  email: z.string().min(1, "Email Address is required.").email("Invalid Email Address."),
+  email: EMAIL_SCHEMA,
   name: z
     .string()
     .min(1, {
@@ -19,4 +24,8 @@ export const registerSchema = z.object({
     .string()
     .min(1, "Password is required.")
     .min(6, "Password must be at least 6 characters."),
+});
+
+export const resendSchema = z.object({
+  email: EMAIL_SCHEMA,
 });
