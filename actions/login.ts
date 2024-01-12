@@ -6,15 +6,13 @@ import { z } from "zod";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
 import { getUserByEmail } from "@/services/user";
-import { generateVerificationToken } from "@/services/verification-token";
 import bcrypt from "bcryptjs";
-import { sendVerificationEmail } from "@/services/mail";
 
 export const login = async (payload: z.infer<typeof loginSchema>) => {
   const validatedFields = loginSchema.safeParse(payload);
 
   if (!validatedFields.success) {
-    return { error: "Invalid credentials." };
+    return { error: "Invalid fields." };
   }
 
   const { email, password } = validatedFields.data;
@@ -31,13 +29,9 @@ export const login = async (payload: z.infer<typeof loginSchema>) => {
     return { error: "Invalid credentials." };
   }
 
-  // Check if user doesn't have a verification email, then generate verification token and send to the email account
+  // Check if user email isn't verified yet, then show message
   if (!existingUser.emailVerified) {
-    const verificationToken = await generateVerificationToken(existingUser.email);
-
-    await sendVerificationEmail(verificationToken.email, verificationToken.token);
-
-    return { success: "Confirmation email sent." };
+    return { error: "Your email address is not verified yet. Please check your email." };
   }
 
   try {
@@ -55,7 +49,8 @@ export const login = async (payload: z.infer<typeof loginSchema>) => {
 
         case "OAuthAccountNotLinked":
           return {
-            error: "Email already used with different provider. Please use a different one.",
+            error:
+              "Another account already registered with the same Email Address. Please login the different one.",
           };
 
         case "Verification":
