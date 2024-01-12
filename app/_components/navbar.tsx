@@ -40,6 +40,9 @@ async function AuthNav() {
           <DropdownMenuItem className="flex flex-col gap-y-2 py-4">
             <Avatar className="w-24 h-24">
               <AvatarImage src={session.user.image ?? ""} />
+              <AvatarFallback>
+                <UserRound size={40} />
+              </AvatarFallback>
             </Avatar>
             <div className="text-center">
               <h3 className="text-lg font-semibold">{session.user.name}</h3>
