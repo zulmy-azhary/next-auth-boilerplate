@@ -11,6 +11,7 @@ import { useTransition } from "react";
 import { login } from "@/actions/login";
 import { FormInput } from "@/components/auth/form-input";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export const LoginForm = () => {
   const [isPending, startTransition] = useTransition();
@@ -27,9 +28,6 @@ export const LoginForm = () => {
       login(values).then((data) => {
         if (data?.error) {
           return toast.error(data.error);
-        }
-        if (data?.success) {
-          return toast.success(data.success);
         }
       });
     });
@@ -54,14 +52,19 @@ export const LoginForm = () => {
               placeholder="e.g. johndoe@example.com"
               isPending={isPending}
             />
-            <FormInput
-              control={form.control}
-              name="password"
-              label="Password"
-              type="password"
-              placeholder="******"
-              isPending={isPending}
-            />
+            <div>
+              <FormInput
+                control={form.control}
+                name="password"
+                label="Password"
+                type="password"
+                placeholder="******"
+                isPending={isPending}
+              />
+              <Button size="sm" variant="link" className="-mt-6 p-0 text-xs text-blue-500 w-full justify-end" asChild>
+                <Link href="/reset">Forgot password?</Link>
+              </Button>
+            </div>
           </div>
           <Button type="submit" disabled={isPending} className="w-full">
             Login
