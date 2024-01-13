@@ -8,7 +8,18 @@ export const sendVerificationEmail = async (email: string, token: string) => {
   await resend.emails.send({
     from: "nextdashboard@resend.dev",
     to: email,
-    subject: "Confirm your email",
-    html: `<p>Click <a href="${verifyEmailLink}">Here</a> to confirm your email.</p>`,
+    subject: "[Next Dashboard] Action required: Verify your email",
+    html: `<p>Click <a href="${verifyEmailLink}">Here</a> to verify your email.</p>`,
+  });
+};
+
+export const sendResetPasswordEmail = async (email: string, token: string) => {
+  const resetPasswordLink = `http://localhost:3000/new-password?token=${token}`;
+
+  await resend.emails.send({
+    from: "nextdashboard@resend.dev",
+    to: email,
+    subject: "[Next Dashboard] Action required: Reset your password",
+    html: `<p>Click <a href="${resetPasswordLink}">Here</a> to reset your password.</p>`,
   });
 };
