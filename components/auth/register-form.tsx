@@ -11,8 +11,10 @@ import { Button } from "@/components/ui/button";
 import { useTransition } from "react";
 import { register } from "@/actions/register";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const RegisterForm = () => {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -29,7 +31,7 @@ export const RegisterForm = () => {
         if (data.error) {
           return toast.error(data.error);
         }
-        form.reset()
+        router.push("/login");
         return toast.success(data.success);
       });
     });
