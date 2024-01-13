@@ -1,7 +1,7 @@
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
-import { Control, FieldValues, Path } from 'react-hook-form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { Control, FieldValues, Path } from "react-hook-form";
 
 type FormInputProps<T extends FieldValues> = React.InputHTMLAttributes<HTMLInputElement> & {
   control: Control<T>;
@@ -10,7 +10,7 @@ type FormInputProps<T extends FieldValues> = React.InputHTMLAttributes<HTMLInput
   isPending?: boolean;
 };
 
-export const FormInput = <T extends FieldValues,>(props: FormInputProps<T>) => {
+export const FormInput = <T extends FieldValues>(props: FormInputProps<T>) => {
   const { control, name, label, isPending, ...rest } = props;
   return (
     <FormField
@@ -32,4 +32,4 @@ export const FormInput = <T extends FieldValues,>(props: FormInputProps<T>) => {
       )}
     />
   );
-}
+};
