@@ -19,7 +19,7 @@ export const register = async (payload: z.infer<typeof registerSchema>) => {
   const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
-    return { error: "Email Address already exists. Please use another one." };
+    return { error: "Email address already exists. Please use another one." };
   }
 
   await createUser({ name, email, password: hashedPassword });

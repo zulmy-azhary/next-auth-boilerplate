@@ -20,7 +20,7 @@ export const login = async (payload: z.infer<typeof loginSchema>) => {
   // Check if user, email and password are exist
   const existingUser = await getUserByEmail(email);
   if (!existingUser || !existingUser.email || !existingUser.password) {
-    return { error: "Email does not exist." };
+    return { error: "Invalid credentials." };
   }
 
   // Check if passwords are matches
