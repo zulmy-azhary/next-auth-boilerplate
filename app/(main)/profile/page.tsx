@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Next Dashboard | Profile",
+  title: "Profile",
 };
 
 export default function ProfilePage() {

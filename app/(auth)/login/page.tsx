@@ -1,11 +1,12 @@
 import { LoginForm } from "@/components/auth/login-form";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Next Dashboard | Login",
-  description: "This is the next dashboard app",
+  title: "Login",
 };
 
-export default async function LoginPage() {
+export default async function LoginPage({ searchParams }: { searchParams: { error: string } }) {
+  if (searchParams.error) redirect(`/error?message=${searchParams.error}`);
   return <LoginForm />;
 }
