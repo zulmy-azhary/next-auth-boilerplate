@@ -78,5 +78,6 @@ model TwoFactorToken {
 model TwoFactorConfirmation {
   id     String @id @default(cuid())
   userId String @unique
+  expires DateTime
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
