@@ -1,8 +1,8 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { getUserByEmail } from "@/services/user";
-import { getVerificationToken } from "@/services/verification-token";
+import { isExpired } from "@/lib/utils";
+import { getUserByEmail, updateUserById } from "@/services/user";
+import { deleteVerificationTokenById, getVerificationToken } from "@/services/verification-token";
 import { redirect } from "next/navigation";
 
 export const newVerification = async (token: string) => {
@@ -11,7 +11,7 @@ export const newVerification = async (token: string) => {
     return { error: "Invalid token provided." };
   }
 
-  const hasExpired = new Date(existingToken.expires) < new Date();
+  const hasExpired = isExpired(existingToken.expires);
   if (hasExpired) {
     redirect("/resend");
   }
@@ -21,21 +21,12 @@ export const newVerification = async (token: string) => {
     return { error: "Email does not exist." };
   }
 
-  await db.user.update({
-    where: {
-      id: existingUser.id,
-    },
-    data: {
-      emailVerified: new Date(),
-      email: existingToken.email, // This is needed when user want to change their email address
-    },
+  await updateUserById(existingUser.id, {
+    emailVerified: new Date(),
+    email: existingToken.email, // This is needed when user want to change their email address
   });
 
-  await db.verificationToken.delete({
-    where: {
-      id: existingToken.id,
-    },
-  });
+  await deleteVerificationTokenById(existingToken.id);
 
   return { success: "Your email address has been verified." };
 };

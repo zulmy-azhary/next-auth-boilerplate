@@ -2,10 +2,10 @@
 
 import { registerSchema } from "@/schemas";
 import { z } from "zod";
-import bcrypt from "bcryptjs";
 import { createUser, getUserByEmail } from "@/services/user";
 import { generateVerificationToken } from "@/services/verification-token";
 import { sendVerificationEmail } from "@/services/mail";
+import { hashPassword } from "@/lib/utils";
 
 export const register = async (payload: z.infer<typeof registerSchema>) => {
   const validatedFields = registerSchema.safeParse(payload);
@@ -14,10 +14,9 @@ export const register = async (payload: z.infer<typeof registerSchema>) => {
     return { error: "Invalid fields." };
   }
   const { name, email, password } = validatedFields.data;
-  const hashedPassword = await bcrypt.hash(password, bcrypt.genSaltSync());
+  const hashedPassword = await hashPassword(password);
 
   const existingUser = await getUserByEmail(email);
-
   if (existingUser) {
     return { error: "Email address already exists. Please use another one." };
   }

@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { setTokenExpiration } from "@/lib/utils";
 import { v4 as uuid } from "uuid";
 
 export const generateVerificationToken = async (email: string) => {
@@ -12,7 +13,7 @@ export const generateVerificationToken = async (email: string) => {
   }
 
   const token = uuid();
-  const expires = new Date(new Date().getTime() + 1000 * 60 * 60); // 1 hour in milliseconds
+  const expires = setTokenExpiration();
 
   const verificationToken = await db.verificationToken.create({
     data: {
@@ -25,7 +26,6 @@ export const generateVerificationToken = async (email: string) => {
   return verificationToken;
 };
 
-
 export const getVerificationToken = async (token: string) => {
   try {
     const verificationToken = await db.verificationToken.findUnique({
@@ -33,7 +33,7 @@ export const getVerificationToken = async (token: string) => {
     });
 
     return verificationToken;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -45,7 +45,17 @@ export const getVerificationTokenByEmail = async (email: string) => {
     });
 
     return verificationToken;
-  } catch (error) {
+  } catch {
+    return null;
+  }
+};
+
+export const deleteVerificationTokenById = async (id: string) => {
+  try {
+    return await db.verificationToken.delete({
+      where: { id },
+    });
+  } catch {
     return null;
   }
 };

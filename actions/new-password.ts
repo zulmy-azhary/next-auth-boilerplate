@@ -1,12 +1,14 @@
 "use server";
 
 import { newPasswordSchema } from "@/schemas";
-import { getResetPasswordToken } from "@/services/reset-password-token";
-import { getUserByEmail } from "@/services/user";
+import {
+  deleteResetPasswordTokenById,
+  getResetPasswordToken,
+} from "@/services/reset-password-token";
+import { getUserByEmail, updateUserById } from "@/services/user";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import bcrypt from "bcryptjs";
-import { db } from "@/lib/db";
+import { hashPassword, isExpired } from "@/lib/utils";
 
 export const newPassword = async (payload: z.infer<typeof newPasswordSchema>, token: string) => {
   const validatedFields = newPasswordSchema.safeParse(payload);
@@ -19,7 +21,7 @@ export const newPassword = async (payload: z.infer<typeof newPasswordSchema>, to
   const existingToken = await getResetPasswordToken(token);
   if (!existingToken) redirect("/");
 
-  const hasExpired = new Date(existingToken.expires) < new Date();
+  const hasExpired = isExpired(existingToken.expires);
   if (hasExpired) {
     return { error: "Token has expired. Please resend to your email." };
   }
@@ -29,20 +31,13 @@ export const newPassword = async (payload: z.infer<typeof newPasswordSchema>, to
     return { error: "Email does not exist." };
   }
 
-  const hashedPassword = await bcrypt.hash(password, bcrypt.genSaltSync());
+  const hashedPassword = await hashPassword(password);
 
-  await db.user.update({
-    where: {
-      id: existingUser.id,
-    },
-    data: {
-      password: hashedPassword,
-    },
+  await updateUserById(existingUser.id, {
+    password: hashedPassword,
   });
 
-  await db.resetPasswordToken.delete({
-    where: { id: existingToken.id }
-  });
+  await deleteResetPasswordTokenById(existingToken.id);
 
   return { success: "Your password has been reset successfully." };
 };

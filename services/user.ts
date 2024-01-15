@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { registerSchema } from "@/schemas";
+import { User } from "@prisma/client";
 import { z } from "zod";
 
 export const getUserByEmail = async (email: string) => {
@@ -25,9 +26,20 @@ export const getUserById = async (id: string) => {
 export const createUser = async (payload: z.infer<typeof registerSchema>) => {
   try {
     return await db.user.create({
-      data: payload
-    })
+      data: payload,
+    });
   } catch {
     return null;
   }
-}
+};
+
+export const updateUserById = async (id: string, payload: Partial<Omit<User, "id">>) => {
+  try {
+    return await db.user.update({
+      where: { id },
+      data: payload,
+    });
+  } catch {
+    return null;
+  }
+};

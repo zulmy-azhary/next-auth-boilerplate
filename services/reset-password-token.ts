@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { setTokenExpiration } from "@/lib/utils";
 import { v4 as uuid } from "uuid";
 
 export const generateResetPasswordToken = async (email: string) => {
@@ -12,7 +13,7 @@ export const generateResetPasswordToken = async (email: string) => {
   }
 
   const token = uuid();
-  const expires = new Date(new Date().getTime() + 1000 * 60 * 60); // 1 hour in milliseconds
+  const expires = setTokenExpiration();
 
   const resetPasswordToken = await db.resetPasswordToken.create({
     data: {
@@ -32,7 +33,7 @@ export const getResetPasswordToken = async (token: string) => {
     });
 
     return resetPasswordToken;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -44,7 +45,17 @@ export const getResetPasswordTokenByEmail = async (email: string) => {
     });
 
     return resetPasswordToken;
-  } catch (error) {
+  } catch {
+    return null;
+  }
+};
+
+export const deleteResetPasswordTokenById = async (id: string) => {
+  try {
+    return await db.resetPasswordToken.delete({
+      where: { id },
+    });
+  } catch {
     return null;
   }
 };
