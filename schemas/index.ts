@@ -46,3 +46,10 @@ export const newPasswordSchema = z
     message: "Password doesn't match.",
     path: ["confirmPassword"],
   });
+
+export const twoFactorSchema = z.object({
+  code: z
+    .string()
+    .regex(/^[0-9]+$/, "Code must be a number.")
+    .length(6, "Code must be 6 digits long."),
+});
