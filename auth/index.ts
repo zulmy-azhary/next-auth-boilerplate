@@ -3,6 +3,10 @@ import { authConfig } from "@/auth/config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db";
 import { getUserById } from "@/services/user";
+import {
+  getTwoFactorConfirmationByUserId,
+} from "@/services/two-factor-confirmation";
+import { isExpired } from "@/lib/utils";
 
 export const {
   handlers: { GET, POST },
@@ -17,7 +21,7 @@ export const {
   },
   pages: {
     signIn: "/login",
-    error: "/error"
+    error: "/error",
   },
   events: {
     async linkAccount({ user }) {
@@ -56,11 +60,21 @@ export const {
       const existingUser = await getUserById(user.id);
       // Prevent sign in without email verification
       if (!existingUser?.emailVerified) return false;
-      
-      // 2FA...
+
+      // If user's 2FA checked
+      if (existingUser.isTwoFactorEnabled) {
+        const existingTwoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+          existingUser.id
+        );
+        // If two factor confirmation doesn't exist, then prevent to login
+        if (!existingTwoFactorConfirmation) return false;
+        // If two factor confirmation is expired, then prevent to login
+        const hasExpired = isExpired(existingTwoFactorConfirmation.expires);
+        if (hasExpired) return false;
+      }
 
       return true;
-    }
+    },
   },
   ...authConfig,
 });
