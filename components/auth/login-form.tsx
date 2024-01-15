@@ -12,8 +12,10 @@ import { login } from "@/actions/login";
 import { FormInput } from "@/components/auth/form-input";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const LoginForm = () => {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -25,11 +27,17 @@ export const LoginForm = () => {
 
   const handleSubmit = form.handleSubmit((values) => {
     startTransition(() => {
-      login(values).then((data) => {
-        if (data?.error) {
-          return toast.error(data.error);
-        }
-      });
+      login(values)
+        .then((data) => {
+          if (!data) return;
+          if (data.error) {
+            return toast.error(data.error);
+          }
+          if (data.twoFactor) {
+            return router.push("/two-factor");
+          }
+        })
+        .catch(() => toast.error("Something went wrong."));
     });
   });
 
@@ -61,7 +69,12 @@ export const LoginForm = () => {
                 placeholder="******"
                 isPending={isPending}
               />
-              <Button size="sm" variant="link" className="-mt-6 p-0 text-xs text-blue-500 w-full justify-end" asChild>
+              <Button
+                size="sm"
+                variant="link"
+                className="-mt-6 p-0 text-xs text-blue-500 w-full justify-end"
+                asChild
+              >
                 <Link href="/reset">Forgot password?</Link>
               </Button>
             </div>
