@@ -19,7 +19,8 @@ export const registerSchema = z.object({
     .min(1, {
       message: "Name is required.",
     })
-    .min(4, "Name must be at least 4 characters."),
+    .min(4, "Name must be at least 4 characters.")
+    .max(24, "Maximum length of Name is 24 characters."),
   password: z
     .string()
     .min(1, "Password is required.")
