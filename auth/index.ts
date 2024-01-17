@@ -2,10 +2,8 @@ import NextAuth from "next-auth";
 import { authConfig } from "@/auth/config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db";
-import { getUserById } from "@/services/user";
-import {
-  getTwoFactorConfirmationByUserId,
-} from "@/services/two-factor-confirmation";
+import { getUserById, updateUserById } from "@/services/user";
+import { getTwoFactorConfirmationByUserId } from "@/services/two-factor-confirmation";
 import { isExpired } from "@/lib/utils";
 
 export const {
@@ -25,12 +23,7 @@ export const {
   },
   events: {
     async linkAccount({ user }) {
-      await db.user.update({
-        where: {
-          id: user.id,
-        },
-        data: { emailVerified: new Date() },
-      });
+      await updateUserById(user.id, { emailVerified: new Date() });
     },
   },
   callbacks: {
