@@ -13,23 +13,7 @@ export default async function NewVerificationPage({
   searchParams: { token: string };
 }) {
   if (!searchParams.token) redirect("/login");
-  const token = await newVerification(searchParams.token);
-  let payload: { type: "success" | "error"; message: string } = {
-    type: "error",
-    message: "",
-  };
-  if (token.success) {
-    payload = {
-      type: "success",
-      message: token.success,
-    };
-  }
-  if (token.error) {
-    payload = {
-      type: "error",
-      message: token.error,
-    };
-  }
+  const data = await newVerification(searchParams.token);
 
-  return <NewVerificationForm payload={payload} />;
+  return <NewVerificationForm data={data} />;
 }
