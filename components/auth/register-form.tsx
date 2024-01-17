@@ -28,11 +28,11 @@ export const RegisterForm = () => {
   const handleSubmit = form.handleSubmit((values) => {
     startTransition(() => {
       register(values).then((data) => {
-        if (data.error) {
-          return toast.error(data.error);
+        if (data.success) {
+          router.push("/login");
+          return toast.success(data.message);
         }
-        router.push("/login");
-        return toast.success(data.success);
+        return toast.error(data.error.message);
       });
     });
   });

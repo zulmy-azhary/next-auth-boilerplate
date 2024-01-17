@@ -30,12 +30,10 @@ export const LoginForm = () => {
       login(values)
         .then((data) => {
           if (!data) return;
-          if (data.error) {
-            return toast.error(data.error);
+          if (!data.success) {
+            return toast.error(data.error.message);
           }
-          if (data.twoFactor) {
-            return router.push("/two-factor");
-          }
+          return router.push("/two-factor");
         })
         .catch(() => toast.error("Something went wrong."));
     });

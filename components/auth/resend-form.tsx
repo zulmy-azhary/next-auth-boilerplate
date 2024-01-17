@@ -25,11 +25,9 @@ export const ResendForm = () => {
     startTransition(() => {
       resendToken(values).then((data) => {
         if (data.success) {
-          return toast.success(data.success);
+          return toast.success(data.message);
         }
-        if (data.error) {
-          return toast.error(data.error);
-        }
+        return toast.error(data.error.message);
       });
     })
   });

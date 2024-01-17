@@ -31,15 +31,12 @@ export const NewPasswordForm = ({ token }: NewPasswordFormProps) => {
   const handleSubmit = form.handleSubmit((values) => {
     startTransition(() => {
       newPassword(values, token).then((data) => {
-        if (!data) return;
         if (data.success) {
           router.push("/login");
-          return toast.success(data.success);
+          return toast.success(data.message);
         }
-        if (data.error) {
-          toast.error(data.error);
-        }
-      })
+        return toast.error(data.error.message);
+      });
     });
   });
 

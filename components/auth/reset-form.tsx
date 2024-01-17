@@ -28,11 +28,9 @@ export const ResetForm = () => {
       resetPassword(values).then((data) => {
         if (data.success) {
           router.push("/login");
-          return toast.success(data.success);
+          return toast.success(data.message);
         }
-        if (data.error) {
-          return toast.error(data.error);
-        }
+        return toast.error(data.error.message);
       });
     });
   });

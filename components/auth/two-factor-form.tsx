@@ -29,8 +29,8 @@ export const TwoFactorForm = ({ payload }: TwoFactorFormProps) => {
     startTransition(() => {
       twoFactor(values, payload).then((data) => {
         if (!data) return;
-        if (data.error) {
-          return toast.error(data.error);
+        if (!data.success) {
+          return toast.error(data.error.message);
         }
       });
     });
@@ -40,14 +40,12 @@ export const TwoFactorForm = ({ payload }: TwoFactorFormProps) => {
     startTransition(() => {
       resendTwoFactor(payload.email).then((data) => {
         if (data.success) {
-          return toast.success(data.success);
+          return toast.success(data.message);
         }
-        if (data.error) {
-          return toast.error(data.error);
-        }
-      })
-    })
-  }
+        return toast.error(data.error.message);
+      });
+    });
+  };
 
   return (
     <CardWrapper
@@ -70,7 +68,13 @@ export const TwoFactorForm = ({ payload }: TwoFactorFormProps) => {
             Verify
           </Button>
         </form>
-        <Button type="button" variant="link" disabled={isPending} className="w-full" onClick={handleResend}>
+        <Button
+          type="button"
+          variant="link"
+          disabled={isPending}
+          className="w-full"
+          onClick={handleResend}
+        >
           Resend
         </Button>
       </Form>
