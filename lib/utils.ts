@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { sign, verify, type SignOptions, type Secret } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { Response, ResponseWithMessage } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -57,3 +58,10 @@ export const verifyJwtToken = <T extends object>(token: string) => {
     };
   }
 };
+
+// Overload for response status in server action
+export function response(response: ResponseWithMessage): Response;
+export function response<T extends Record<string, unknown>>(response: Response<T>): Response<T>;
+export function response<T extends object>(response: T): T {
+  return response;
+}
