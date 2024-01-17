@@ -5,11 +5,7 @@ import { v4 as uuid } from "uuid";
 export const generateResetPasswordToken = async (email: string) => {
   const existingToken = await getResetPasswordTokenByEmail(email);
   if (existingToken) {
-    await db.resetPasswordToken.delete({
-      where: {
-        id: existingToken.id,
-      },
-    });
+    await deleteResetPasswordTokenById(existingToken.id);
   }
 
   const token = uuid();

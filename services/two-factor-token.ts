@@ -5,9 +5,7 @@ import crypto from "node:crypto";
 export const generateTwoFactorToken = async (email: string) => {
   const existingToken = await getTwoFactorTokenByEmail(email);
   if (existingToken) {
-    await db.twoFactorToken.delete({
-      where: { id: existingToken.id },
-    });
+    await deleteTwoFactorTokenById(existingToken.id);
   }
 
   const token = String(crypto.randomInt(100000, 1000000));
