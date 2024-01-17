@@ -5,27 +5,48 @@ import { z } from "zod";
 import { createUser, getUserByEmail } from "@/services/user";
 import { generateVerificationToken } from "@/services/verification-token";
 import { sendVerificationEmail } from "@/services/mail";
-import { hashPassword } from "@/lib/utils";
+import { hashPassword, response } from "@/lib/utils";
 
 export const register = async (payload: z.infer<typeof registerSchema>) => {
+  // Check if user input is not valid.
   const validatedFields = registerSchema.safeParse(payload);
-
   if (!validatedFields.success) {
-    return { error: "Invalid fields." };
+    return response({
+      success: false,
+      error: {
+        code: 422,
+        message: "Invalid fields.",
+      },
+    });
   }
   const { name, email, password } = validatedFields.data;
-  const hashedPassword = await hashPassword(password);
 
+  // Check if user already exist, then return an error.
   const existingUser = await getUserByEmail(email);
   if (existingUser) {
-    return { error: "Email address already exists. Please use another one." };
+    return response({
+      success: false,
+      error: {
+        code: 422,
+        message: "Email address already exists. Please use another one.",
+      },
+    });
   }
 
+  // Hash password that user entered.
+  const hashedPassword = await hashPassword(password);
+
+  // Create an user.
   await createUser({ name, email, password: hashedPassword });
 
-  // ! Send Verification Token
+  // Generate verification token, then send it to the email.
   const verificationToken = await generateVerificationToken(email);
   await sendVerificationEmail(verificationToken.email, verificationToken.token);
 
-  return { success: "Confirmation email sent. Please check your email." };
+  // Return response success.
+  return response({
+    success: true,
+    code: 201,
+    message: "Confirmation email sent. Please check your email.",
+  });
 };
