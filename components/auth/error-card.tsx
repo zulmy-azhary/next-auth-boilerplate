@@ -25,6 +25,7 @@ export const ErrorCard = ({ message }: ErrorCardProps) => {
       headerDescription={headerDescription}
       backButtonLabel="Back to login"
       backButtonHref="/login"
+      heroImage="/assets/error.svg"
     />
   );
 };
