@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,25 +11,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserRound } from "lucide-react";
-import { auth, signOut } from "@/auth";
+import { signOut } from "@/auth";
 import Link from "next/link";
+import { currentUser } from "@/lib/auth";
 
 async function AuthNav() {
-  const session = await auth();
+  const user = await currentUser();
 
-  if (!session) return null;
+  if (!user) return;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="pr-4 rounded-none h-fit flex gap-x-2">
+        <Button variant="ghost" className="pr-4 rounded-none h-fit flex gap-x-2 focus-visible:ring-offset-0">
           <Avatar>
-            <AvatarImage src={session.user.image ?? ""} />
+            <AvatarImage src={user.image ?? ""} />
             <AvatarFallback>
               <UserRound />
             </AvatarFallback>
           </Avatar>
-          <p>{session.user.name}</p>
+          <p>{user.name}</p>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
@@ -39,15 +39,15 @@ async function AuthNav() {
         <DropdownMenuGroup>
           <DropdownMenuItem className="flex flex-col gap-y-2 py-4">
             <Avatar className="w-24 h-24">
-              <AvatarImage src={session.user.image ?? ""} />
+              <AvatarImage src={user.image ?? ""} />
               <AvatarFallback>
                 <UserRound size={40} />
               </AvatarFallback>
             </Avatar>
             <div className="text-center">
-              <h3 className="text-lg font-semibold">{session.user.name}</h3>
-              <p className="text-sm">{session.user.email}</p>
-              <p className="text-sm">{session.user.role}</p>
+              <h3 className="text-lg font-semibold">{user.name}</h3>
+              <p className="text-sm">{user.email}</p>
+              <p className="text-sm">{user.role}</p>
             </div>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -59,9 +59,11 @@ async function AuthNav() {
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            Settings
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+          <DropdownMenuItem asChild>
+            <Link href="/settings">
+              Settings
+              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -85,7 +87,7 @@ async function AuthNav() {
 
 export default function Navbar() {
   return (
-    <nav className="flex gap-x-4 items-center justify-between border-b-2 pl-4">
+    <nav className="flex gap-x-4 items-center justify-between bg-gray-50 shadow-sm pl-4">
       <Link href="/">
         <h1 className="text-2xl font-semibold">Next Dashboard</h1>
       </Link>
