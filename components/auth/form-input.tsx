@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Control, FieldValues, Path } from "react-hook-form";
 
-type FormInputProps<T extends FieldValues> = React.InputHTMLAttributes<HTMLInputElement> & {
+type FormInputProps<T extends FieldValues> = React.ComponentPropsWithRef<"input"> & {
   control: Control<T>;
   name: Path<T>;
   label: string;
@@ -11,7 +11,7 @@ type FormInputProps<T extends FieldValues> = React.InputHTMLAttributes<HTMLInput
 };
 
 export const FormInput = <T extends FieldValues>(props: FormInputProps<T>) => {
-  const { control, name, label, isPending, ...rest } = props;
+  const { control, name, label, isPending, disabled, ...rest } = props;
   return (
     <FormField
       control={control}
@@ -24,7 +24,7 @@ export const FormInput = <T extends FieldValues>(props: FormInputProps<T>) => {
               {...field}
               {...rest}
               className={cn(fieldState.error && "border-red-500")}
-              disabled={isPending}
+              disabled={isPending || disabled}
             />
           </FormControl>
           <FormMessage className="text-xs" />
