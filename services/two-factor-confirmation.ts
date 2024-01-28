@@ -40,3 +40,13 @@ export const deleteTwoFactorConfirmationById = async (id: string) => {
     return null;
   }
 };
+
+export const deleteTwoFactorConfirmationByUserId = async (userId: string) => {
+  try {
+    return await db.twoFactorConfirmation.delete({
+      where: { userId },
+    });
+  } catch {
+    return null;
+  }
+}
