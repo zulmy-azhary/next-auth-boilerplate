@@ -5,12 +5,14 @@ import { db } from "@/lib/db";
 import { getUserById, updateUserById } from "@/services/user";
 import { getTwoFactorConfirmationByUserId } from "@/services/two-factor-confirmation";
 import { isExpired } from "@/lib/utils";
+import { getAccountByUserId } from "@/services/account";
 
 export const {
   handlers: { GET, POST },
   auth,
   signIn,
   signOut,
+  update
 } = NextAuth({
   adapter: PrismaAdapter(db),
   session: {
@@ -33,7 +35,14 @@ export const {
       const existingUser = await getUserById(token.sub);
       if (!existingUser) return token;
 
+      const existingAccount = await getAccountByUserId(existingUser.id);
+
+      token.name = existingUser.name;
+      token.email = existingUser.email;
       token.role = existingUser.role;
+      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
+      token.isOAuth = !!existingAccount;
+
       return token;
     },
     async session({ token, session }) {
@@ -43,6 +52,13 @@ export const {
 
       if (token.role && session.user) {
         session.user.role = token.role;
+      }
+
+      if (session.user) {
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled;
+        session.user.isOAuth = token.isOAuth;
       }
 
       return session;
