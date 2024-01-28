@@ -1,4 +1,4 @@
-import { TwoFactorForm } from "@/components/auth/two-factor-form";
+import { TwoFactorForm } from "@/components/form/two-factor-form";
 import { verifyJwtToken } from "@/lib/utils";
 import { loginSchema } from "@/schemas";
 import { getTwoFactorTokenByEmail } from "@/services/two-factor-token";

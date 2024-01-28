@@ -1,4 +1,4 @@
-import { ResendForm } from "@/components/auth/resend-form";
+import { ResendForm } from "@/components/form/resend-form";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

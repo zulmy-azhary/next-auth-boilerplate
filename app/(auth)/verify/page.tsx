@@ -1,5 +1,5 @@
 import { newVerification } from "@/actions/verify-token";
-import { NewVerificationForm } from "@/components/auth/verify-token-form";
+import { NewVerificationForm } from "@/components/form/verify-token-form";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 

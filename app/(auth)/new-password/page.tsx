@@ -1,4 +1,4 @@
-import { NewPasswordForm } from "@/components/auth/new-password-form";
+import { NewPasswordForm } from "@/components/form/new-password-form";
 import { getResetPasswordToken } from "@/services/reset-password-token";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
