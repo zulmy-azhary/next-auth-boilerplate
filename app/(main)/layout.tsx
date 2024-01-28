@@ -4,7 +4,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   return (
     <>
       <Navbar />
-      <main>{children}</main>
+      <main className="mx-12 mt-12">{children}</main>
     </>
   );
 }
