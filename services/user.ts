@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { registerSchema } from "@/schemas";
-import { User } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 export const getUserByEmail = async (email: string) => {
@@ -33,7 +33,8 @@ export const createUser = async (payload: z.infer<typeof registerSchema>) => {
   }
 };
 
-export const updateUserById = async (id: string, payload: Partial<Omit<User, "id">>) => {
+type UpdateUserType = Prisma.Args<typeof db.user, "update">["data"];
+export const updateUserById = async (id: string, payload: UpdateUserType) => {
   try {
     return await db.user.update({
       where: { id },
