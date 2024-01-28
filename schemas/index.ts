@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-// const EMAIL_REGEX = /^([A-Z0-9_+-]+\.?)*[A-Z0-9_+-]@([A-Z0-9][A-Z0-9-]*\.)+[A-Z]{2,}$/i
-
 const EMAIL_SCHEMA = z
   .string()
   .min(1, "Email Address is required.")
@@ -54,3 +52,40 @@ export const twoFactorSchema = z.object({
     .regex(/^[0-9]+$/, "Code must be a number.")
     .length(6, "Code must be 6 digits long."),
 });
+
+export const profileSchema = z
+  .object({
+    name: z.optional(
+      z
+        .string()
+        .min(1, {
+          message: "Name is required.",
+        })
+        .min(4, "Name must be at least 4 characters.")
+        .max(24, "Maximum length of Name is 24 characters.")
+    ),
+    email: z.optional(z.string().email()),
+    password: z.optional(z.string().min(6, "Password must be at least 6 characters.")),
+    newPassword: z.optional(z.string().min(6, "New Password must be at least 6 characters.")),
+    isTwoFactorEnabled: z.optional(z.boolean()),
+  })
+  .refine(
+    (data) => {
+      if (!data.password && data.newPassword) return false;
+      return true;
+    },
+    {
+      message: "Password is required.",
+      path: ["password"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.password && !data.newPassword) return false;
+      return true;
+    },
+    {
+      message: "New Password is required.",
+      path: ["newPassword"],
+    }
+  );
