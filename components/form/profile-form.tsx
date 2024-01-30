@@ -29,7 +29,7 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
       email: user.email || undefined,
       password: undefined,
       newPassword: undefined,
-      isTwoFactorEnabled: user.isTwoFactorEnabled,
+      isTwoFactorEnabled: user.isTwoFactorEnabled || undefined,
     },
   });
 
